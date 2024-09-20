@@ -1,42 +1,463 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- let's import our stylesheet (found in public/css/styles.css)-->
-    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+    <title>Vehicle Transport Converter</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+      }
+    
+      .navbar {
+        width: 100%;
+        height: 64px;
+        background-color: white;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        position: fixed;
+        top: 0;
+        z-index: 999;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+    
+      .navbar:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      }
+    
+      .navbar h1 {
+        color: #0000aa;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+      }
+    
+      .container {
+        padding: 20px;
+        max-width: 800px;
+        margin: 100px auto 20px;
+        background-color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+      }
+    
+      .input-group,
+      .vehicle-select,
+      .results {
+        margin-bottom: 20px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+      }
+    
+      label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+        color: #0000aa;
+      }
+    
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #0000aa;
+        border-radius: 5px;
+        color: #0000aa;
+        background-color: white;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+    
+      input:focus,
+      select:focus {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-color: #0000cc;
+      }
+    
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #d6eaff;
+        color: #0000aa;
+        border: 1px solid #0000aa;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+    
+      button:hover {
+        background-color: #c0d9ff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+      }
+    
+      .results {
+        max-height: 500px; 
+        overflow-x: auto; 
+        margin-top: 20px; 
+      }
+    
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: white;
+        color: #0000aa;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+    
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+      }
+    
+      th,
+      td {
+        padding: 12px;
+        text-align: center;
+        color: #0000aa;
+        background-color: white;
+      }
+    
+      th {
+        background-color: #f4f4f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    
+      .out-of-range {
+        color: red;
+        font-weight: bold;
+      }
+    
+      .results h3 {
+        font-weight: bold;
+        color: #0000aa;
+        margin-bottom: 10px;
+      }
+    </style>
+    
   </head>
-
-  <!-- you can also specify styles straight in html! Let's use Verdana on this page.-->
-  <body style="font-family: Verdana">
-    <header
-      style="background-color: #e5e5e5; padding: 15px; text-align: center"
-    >
-      <h1>Hello World</h1>
-    </header>
-
-    <div class="site-view">
-      <nav>
-        <a href="/a">Normal Rabbit</a>
-        <a href="/b">Gray Rabbit</a>
-        <a href="/c">Sepia Rabbit</a>
-      </nav>
-
-      <main>
-        <h2>Why are these colors so ugly?</h2>
-        <p>
-          Sure makes you feel motivated to pick a better color-scheme for
-          yourself instead of sticking with these ugly default colors, huh? >:)
-        </p>
-      </main>
-
-      <footer>
-        <h2>About</h2>
-        <p>
-          This is some example code prepared for CS160: User Interface Design
-          &amp; Development, Spring 2024. It was built by Nate Weinman, Shm
-          Almeda, and Timothy J. Aveni.
-        </p>
-      </footer>
+  <body>
+    <div class="navbar">
+      <h1>Vehicle Transport Converter</h1>
     </div>
+
+    <div class="container">
+      <div class="input-group">
+        <label for="distance">Enter Distance (km):</label>
+        <input
+          type="number"
+          id="distance"
+          placeholder="Enter distance in kilometers" />
+      </div>
+
+      <div class="vehicle-select">
+        <label for="vehicle">Select Vehicle:</label>
+        <select id="vehicleSelect">
+          <option value="">Select a vehicle</option>
+          <!-- Cars  -->
+          <option value="Maruti Suzuki Alto">Maruti Suzuki Alto</option>
+          <option value="Hyundai i20">Hyundai i20</option>
+          <option value="Tata Nexon">Tata Nexon</option>
+          <option value="Honda City">Honda City</option>
+          <option value="Mahindra Thar">Mahindra Thar</option>
+          <option value="Toyota Innova Crysta">Toyota Innova Crysta</option>
+          <option value="Kia Seltos">Kia Seltos</option>
+          <option value="Renault Kwid">Renault Kwid</option>
+          <option value="Ford EcoSport">Ford EcoSport</option>
+          <option value="Tata Tiago">Tata Tiago</option>
+          <!-- Bikes -->
+          <option value="Bajaj Pulsar">Bajaj Pulsar</option>
+          <option value="KTM Duke 390">KTM Duke 390</option>
+          <option value="Honda CBR 150R">Honda CBR 150R</option>
+          <option value="Yamaha YZF R15">Yamaha YZF R15</option>
+          <option value="Suzuki Gixxer">Suzuki Gixxer</option>
+          <option value="TVS Apache RTR 200">TVS Apache RTR 200</option>
+          <option value="Kawasaki Ninja 300">Kawasaki Ninja 300</option>
+          <!-- Buses -->
+          <option value="Mercedes-Benz Sprinter">Mercedes-Benz Sprinter</option>
+          <option value="Volvo 9700">Volvo 9700</option>
+          <option value="Ashok Leyland Bus">Ashok Leyland Bus</option>
+          <option value="Tata Starbus">Tata Starbus</option>
+        </select>
+      </div>
+
+      <button id="calculateBtn">Calculate Time & Fuel Efficiency</button>
+
+      <div class="results">
+        <h3>Results</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>TYPE OF VEHICLE</th>
+              <th>TOP SPEED (KM/H)</th>
+              <th>FUEL EFFICIENCY (KM/L)</th>
+              <th>FUEL TANK CAPACITY (L)</th>
+              <th>MAX RANGE (KM)</th>
+              <th>TIME (Hours)</th>
+              <th>FUEL NEEDED (Liters)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTable">
+           
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const vehicles = [
+        {
+          name: "Maruti Suzuki Alto",
+          topSpeed: 140,
+          fuelEfficiency: 22.05,
+          fuelTank: 35,
+          maxRange: 771.75,
+        },
+        {
+          name: "Hyundai i20",
+          topSpeed: 180,
+          fuelEfficiency: 20.35,
+          fuelTank: 37,
+          maxRange: 753.05,
+        },
+        {
+          name: "Tata Nexon",
+          topSpeed: 180,
+          fuelEfficiency: 17.57,
+          fuelTank: 44,
+          maxRange: 772.68,
+        },
+        {
+          name: "Honda City",
+          topSpeed: 180,
+          fuelEfficiency: 17.8,
+          fuelTank: 40,
+          maxRange: 712.0,
+        },
+        {
+          name: "Mahindra Thar",
+          topSpeed: 155,
+          fuelEfficiency: 15.2,
+          fuelTank: 57,
+          maxRange: 866.4,
+        },
+        {
+          name: "Toyota Innova Crysta",
+          topSpeed: 179,
+          fuelEfficiency: 11.25,
+          fuelTank: 55,
+          maxRange: 618.75,
+        },
+        {
+          name: "Kia Seltos",
+          topSpeed: 170,
+          fuelEfficiency: 16.8,
+          fuelTank: 50,
+          maxRange: 840.0,
+        },
+        {
+          name: "Renault Kwid",
+          topSpeed: 150,
+          fuelEfficiency: 22.3,
+          fuelTank: 28,
+          maxRange: 624.4,
+        },
+        {
+          name: "Ford EcoSport",
+          topSpeed: 182,
+          fuelEfficiency: 15.9,
+          fuelTank: 52,
+          maxRange: 826.8,
+        },
+        {
+          name: "Tata Tiago",
+          topSpeed: 150,
+          fuelEfficiency: 23.84,
+          fuelTank: 35,
+          maxRange: 834.4,
+        },
+        
+        {
+          name: "Bajaj Pulsar",
+          topSpeed: 135,
+          fuelEfficiency: 45,
+          fuelTank: 15,
+          maxRange: 675,
+        },
+        {
+          name: "KTM Duke 390",
+          topSpeed: 167,
+          fuelEfficiency: 30,
+          fuelTank: 13.5,
+          maxRange: 405,
+        },
+        {
+          name: "Honda CBR 150R",
+          topSpeed: 135,
+          fuelEfficiency: 40,
+          fuelTank: 12,
+          maxRange: 480,
+        },
+        {
+          name: "Yamaha YZF R15",
+          topSpeed: 136,
+          fuelEfficiency: 40,
+          fuelTank: 11,
+          maxRange: 440,
+        },
+        {
+          name: "Suzuki Gixxer",
+          topSpeed: 130,
+          fuelEfficiency: 50,
+          fuelTank: 12,
+          maxRange: 600,
+        },
+        {
+          name: "TVS Apache RTR 200",
+          topSpeed: 128,
+          fuelEfficiency: 35,
+          fuelTank: 12,
+          maxRange: 420,
+        },
+        {
+          name: "Kawasaki Ninja 300",
+          topSpeed: 180,
+          fuelEfficiency: 30,
+          fuelTank: 17,
+          maxRange: 510,
+        },
+       
+        {
+          name: "Mercedes-Benz Sprinter",
+          topSpeed: 120,
+          fuelEfficiency: 8,
+          fuelTank: 75,
+          maxRange: 600,
+        },
+        {
+          name: "Volvo 9700",
+          topSpeed: 100,
+          fuelEfficiency: 6,
+          fuelTank: 300,
+          maxRange: 1800,
+        },
+        {
+          name: "Ashok Leyland Bus",
+          topSpeed: 80,
+          fuelEfficiency: 5,
+          fuelTank: 200,
+          maxRange: 1000,
+        },
+        {
+          name: "Tata Starbus",
+          topSpeed: 90,
+          fuelEfficiency: 6,
+          fuelTank: 180,
+          maxRange: 1080,
+        },
+      ];
+
+      document
+        .getElementById("calculateBtn")
+        .addEventListener("click", function () {
+          const distance = parseFloat(
+            document.getElementById("distance").value
+          );
+          const selectedVehicle =
+            document.getElementById("vehicleSelect").value;
+
+          if (!distance || !selectedVehicle) {
+            alert("Please enter distance and select a vehicle.");
+            return;
+          }
+
+          const selected = vehicles.find(
+            (vehicle) => vehicle.name === selectedVehicle
+          );
+          const time = distance / selected.topSpeed;
+          const fuelNeeded = distance / selected.fuelEfficiency;
+
+          const resultsTable = document.getElementById("resultsTable");
+          resultsTable.innerHTML = ""; 
+
+         
+          const selectedRow = `
+              <tr style="background-color: #00796b; color: white;">
+                  <td>${selected.name}</td>
+                  <td>${selected.topSpeed}</td>
+                  <td>${selected.fuelEfficiency}</td>
+                  <td>${selected.fuelTank}</td>
+                  <td>${selected.maxRange}</td>
+                  <td>${time.toFixed(2)} hours</td>
+                  <td>${fuelNeeded.toFixed(2)} liters</td>
+                  <td class="${
+                    fuelNeeded > selected.maxRange ? "out-of-range" : ""
+                  }">
+                      ${
+                        fuelNeeded > selected.maxRange
+                          ? "Out of range"
+                          : "In range"
+                      }
+                  </td>
+              </tr>
+          `;
+
+          resultsTable.innerHTML += selectedRow;
+
+          vehicles.forEach((vehicle) => {
+            if (vehicle.name !== selectedVehicle) {
+              const otherTime = distance / vehicle.topSpeed;
+              const otherFuelNeeded = distance / vehicle.fuelEfficiency;
+
+              const row = `
+                      <tr>
+                          <td>${vehicle.name}</td>
+                          <td>${vehicle.topSpeed}</td>
+                          <td>${vehicle.fuelEfficiency}</td>
+                          <td>${vehicle.fuelTank}</td>
+                          <td>${vehicle.maxRange}</td>
+                          <td>${otherTime.toFixed(2)} hours</td>
+                          <td>${otherFuelNeeded.toFixed(2)} liters</td>
+                          <td class="${
+                            otherFuelNeeded > vehicle.maxRange
+                              ? "out-of-range"
+                              : ""
+                          }">
+                              ${
+                                otherFuelNeeded > vehicle.maxRange
+                                  ? "Out of range"
+                                  : "In range"
+                              }
+                          </td>
+                      </tr>
+                  `;
+
+              resultsTable.innerHTML += row;
+            }
+          });
+          document.querySelector(".results").scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+    </script>
   </body>
 </html>
