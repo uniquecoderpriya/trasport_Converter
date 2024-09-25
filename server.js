@@ -1,20 +1,18 @@
-import express from 'express';
-import fs from 'node:fs/promises';
+import express from "express";
+import fs from "node:fs/promises";
 
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // Keep track of the parent directory that `server.js` resides in; we'll use this later.
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Try grabbing the PORT and HOST variables from the environment, or use localhost:8000 as a default.
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
-const HOST = process.env.HOST ?? 'localhost';
-
+const HOST = process.env.HOST ?? "localhost";
 
 // `app` refers to this particular server, the one we'll add behavior to.
 const app = express();
-
 
 // app.use() asks our server to use some **middleware**, which can intercept and handle requests
 //   before our custom request handlers are invoked.
@@ -29,7 +27,7 @@ app.use(
   // Note that `express.static` will send the contents of `index.html` if no path is specified
   //   (i.e. http://localhost:8000/), as is standard. You can configure this if you'd like:
   //   https://expressjs.com/en/4x/api.html#express.static
-  express.static('public/'),
+  express.static("public/")
 );
 
 // That said, we don't *need* to have a file in the filesystem for every route on the server.
@@ -38,8 +36,8 @@ app.use(
 //   on the server.
 // You can try this by visiting http://localhost:8000/hello-world.html in your browser. Try changing
 //   the response text in this server code (but make sure to restart the server first)!
-app.get('/hello-world.html', (request, response) => {
-  response.status(200).send('Hello, world!');
+app.get("/hello-world.html", (request, response) => {
+  response.status(200).send("Hello, world!");
 });
 
 // We can dynamically generate a response, if we'd like, rather than sending the same thing
@@ -47,7 +45,7 @@ app.get('/hello-world.html', (request, response) => {
 // The "200" status code, by the way, just tells the browser that everything went
 //   fine (you can compare this to 404 or 500, which are error codes). A list of status codes
 //   is available at https://http.cat/.
-app.get('/random', (request, response) => {
+app.get("/random", (request, response) => {
   response.status(200).send(Math.random().toString());
 });
 
@@ -55,7 +53,7 @@ app.get('/random', (request, response) => {
 //   In this case, we're using an Express syntax to fetch parameters from the URL.
 // Try visiting http://localhost:8000/add/12/34 -- now we have an *infinite* number of routes,
 //   even though there's no actual underlying HTML file being served to the user.
-app.get('/add/:first/:second', (request, response) => {
+app.get("/add/:first/:second", (request, response) => {
   const a = parseInt(request.params.first, 10); // Grab the param called "first" and convert to an int
   const b = parseInt(request.params.second, 10); // The second argument to parseInt parses in base-10
 
@@ -64,31 +62,30 @@ app.get('/add/:first/:second', (request, response) => {
   response.status(200).send(sum.toString());
 });
 
-
 // We can also define our own custom routes for actual files on the filesystem.
 //   This route handler is marked `async`, so we can use the `await` keyword to wait for a
 //   filesystem operation before responding to the user.
 // Try visiting http://localhost:8000/a rather than http://localhost:8000/a.html -- you'll notice that
 //   it works just the same!
-app.get('/a', async (request, response) => {
-  const htmlContents = await fs.readFile('public/a.html');
+app.get("/a", async (request, response) => {
+  const htmlContents = await fs.readFile("public/a.html");
   response.status(200).send(htmlContents.toString());
 });
 
 // Express has a helper function for this, so we don't need to use the filesystem library directly:
-app.get('/b', (request, response) => {
-  response.status(200).sendFile('public/b.html', { root: __dirname }); // We do need to tell Express where to look!
+app.get("/b", (request, response) => {
+  response.status(200).sendFile("public/b.html", { root: __dirname }); // We do need to tell Express where to look!
 });
 
-app.get('/c', (request, response) => {
-  response.status(200).sendFile('public/c.html', { root: __dirname });
+app.get("/c", (request, response) => {
+  response.status(200).sendFile("public/c.html", { root: __dirname });
 });
 
 // Now, we can access our HTML using these more convenient `/a`, `/b`, and `/c` routes.
-
 
 // Finally, we tell this server to listen for new requests. This line is what makes the Node process
 //   run indefinitely, waiting for HTTP requests and responding as we defined above.
 app.listen(PORT, HOST, () => {
   console.log(`Server listening at http://${HOST}:${PORT}`);
 });
+
